@@ -1,0 +1,64 @@
+diff --git a/node_modules/dynamodb-onetable/dist/cjs/Model.d.ts b/node_modules/dynamodb-onetable/dist/cjs/Model.d.ts
+index caccd43..0d3ac9f 100644
+--- a/node_modules/dynamodb-onetable/dist/cjs/Model.d.ts
++++ b/node_modules/dynamodb-onetable/dist/cjs/Model.d.ts
+@@ -102,12 +102,12 @@ type EntityFieldFromType<T extends OneField> =
+       T['type'] extends (ArrayConstructor | 'array') ? ArrayItemType<T>[]
+     : T['type'] extends (BooleanConstructor | 'boolean') ? boolean
+     : T['type'] extends (NumberConstructor | 'number') ? number
+-    : T['type'] extends (ObjectConstructor | 'object') ? Entity<T["schema"]>
++    : T['type'] extends (ObjectConstructor | 'object') ? Entity<Exclude<T["schema"], undefined>>
+     : T['type'] extends (DateConstructor | 'date') ? Date
+     : T['type'] extends (ArrayBufferConstructor) ? ArrayBuffer
+     : T['type'] extends (StringConstructor | 'string') ? string
+     : T['type'] extends (SetConstructor | 'set') ? Set<any>
+-    : T['type'] extends 'typed-array' ? EntityFieldFromType<T["items"]>[]
++    : T['type'] extends 'typed-array' ? EntityFieldFromType<Exclude<T["items"],undefined>>[]
+     : never;
+ 
+ type ArrayItemType<T extends OneField> =
+diff --git a/node_modules/dynamodb-onetable/dist/cjs/Table.d.ts b/node_modules/dynamodb-onetable/dist/cjs/Table.d.ts
+index 41d2a0a..321cad2 100644
+--- a/node_modules/dynamodb-onetable/dist/cjs/Table.d.ts
++++ b/node_modules/dynamodb-onetable/dist/cjs/Table.d.ts
+@@ -48,7 +48,7 @@ type TableConstructorParams<Schema extends OneSchema> = {
+     uuid?: (() => string) | string, //  Function to create a UUID if field schema requires it.
+ };
+ 
+-type ModelNames<Schema> = keyof Schema["models"];
++type ModelNames<Schema extends OneSchema> = keyof Schema["models"];
+ type ExtractModel<M> = M extends Entity<infer X> ? X : never
+ 
+ export class Table<Schema extends OneSchema = any> {
+diff --git a/node_modules/dynamodb-onetable/dist/mjs/Model.d.ts b/node_modules/dynamodb-onetable/dist/mjs/Model.d.ts
+index caccd43..5f1057c 100644
+--- a/node_modules/dynamodb-onetable/dist/mjs/Model.d.ts
++++ b/node_modules/dynamodb-onetable/dist/mjs/Model.d.ts
+@@ -102,12 +102,12 @@ type EntityFieldFromType<T extends OneField> =
+       T['type'] extends (ArrayConstructor | 'array') ? ArrayItemType<T>[]
+     : T['type'] extends (BooleanConstructor | 'boolean') ? boolean
+     : T['type'] extends (NumberConstructor | 'number') ? number
+-    : T['type'] extends (ObjectConstructor | 'object') ? Entity<T["schema"]>
++    : T['type'] extends (ObjectConstructor | 'object') ? Entity<Exclude<T["schema"],undefined>>
+     : T['type'] extends (DateConstructor | 'date') ? Date
+     : T['type'] extends (ArrayBufferConstructor) ? ArrayBuffer
+     : T['type'] extends (StringConstructor | 'string') ? string
+     : T['type'] extends (SetConstructor | 'set') ? Set<any>
+-    : T['type'] extends 'typed-array' ? EntityFieldFromType<T["items"]>[]
++    : T['type'] extends 'typed-array' ? EntityFieldFromType<Exclude<T["items"],undefined>>[]
+     : never;
+ 
+ type ArrayItemType<T extends OneField> =
+diff --git a/node_modules/dynamodb-onetable/dist/mjs/Table.d.ts b/node_modules/dynamodb-onetable/dist/mjs/Table.d.ts
+index 41d2a0a..321cad2 100644
+--- a/node_modules/dynamodb-onetable/dist/mjs/Table.d.ts
++++ b/node_modules/dynamodb-onetable/dist/mjs/Table.d.ts
+@@ -48,7 +48,7 @@ type TableConstructorParams<Schema extends OneSchema> = {
+     uuid?: (() => string) | string, //  Function to create a UUID if field schema requires it.
+ };
+ 
+-type ModelNames<Schema> = keyof Schema["models"];
++type ModelNames<Schema extends OneSchema> = keyof Schema["models"];
+ type ExtractModel<M> = M extends Entity<infer X> ? X : never
+ 
+ export class Table<Schema extends OneSchema = any> {
